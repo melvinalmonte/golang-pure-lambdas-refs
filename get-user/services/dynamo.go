@@ -14,7 +14,7 @@ import (
 )
 
 func QueryToDynamo(userId string) ([]models.UserModel, error) {
-	zap.S().Info("-----Updating entry in DynamoDB request start-----")
+	zap.S().Info("-----Query entry in DynamoDB request start-----")
 
 	user := []models.UserModel{}
 
@@ -43,7 +43,7 @@ func QueryToDynamo(userId string) ([]models.UserModel, error) {
 	})
 
 	if err != nil {
-		zap.S().Errorf("An error has occurred updating user entry, error: %v", err)
+		zap.S().Errorf("An error has occurred getting user entry, error: %v", err)
 
 	}
 
@@ -56,7 +56,7 @@ func QueryToDynamo(userId string) ([]models.UserModel, error) {
 
 	}
 
-	zap.S().Info("-----Updating entry in DynamoDB request update end-----")
+	zap.S().Info("-----Query entry in DynamoDB request update end-----")
 
 	return user, err
 
