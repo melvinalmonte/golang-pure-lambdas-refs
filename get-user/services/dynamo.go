@@ -43,7 +43,7 @@ func QueryToDynamo(userId string) ([]models.UserModel, error) {
 	})
 
 	if err != nil {
-		zap.S().Errorf("An error has occurred getting user entry, error: %v", err)
+		zap.S().Errorf("An error has occurred querying user entry, error: %v", err)
 
 	}
 
