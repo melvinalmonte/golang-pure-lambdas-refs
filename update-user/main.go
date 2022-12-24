@@ -21,11 +21,17 @@ func HandleRequest(context context.Context, event events.APIGatewayProxyRequest)
 	var userPayload models.UserModel
 	uuid := event.PathParameters["uuid"]
 
-	json.Unmarshal([]byte(event.Body), &userPayload)
-
-	err := services.UpdateItemInDynamo(userPayload, uuid)
+	err := json.Unmarshal([]byte(event.Body), &userPayload)
 
 	if err != nil {
+		zap.S().Errorw("An error has occurred marshaling the request body, error: %v", err)
+		return events.APIGatewayProxyResponse{Body: "An error has occurred, check logs for more details.", StatusCode: http.StatusBadRequest}, nil
+	}
+
+	err = services.UpdateItemInDynamo(userPayload, uuid)
+
+	if err != nil {
+		zap.S().Errorw("An error has occurred writing to DynamoDB, error: %v", err)
 		return events.APIGatewayProxyResponse{Body: "An error has occurred writing to DynamoDB, check logs for more details.", StatusCode: http.StatusBadRequest}, nil
 	}
 
