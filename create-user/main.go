@@ -21,7 +21,12 @@ func HandleRequest(context context.Context, event events.APIGatewayProxyRequest)
 
 	var userPayload models.UserModel
 
-	json.Unmarshal([]byte(event.Body), &userPayload)
+	err := json.Unmarshal([]byte(event.Body), &userPayload)
+
+	if err != nil {
+		zap.S().Errorw("An error has occurred marshaling the request body, error: %v", err)
+		return events.APIGatewayProxyResponse{Body: "An error has occurred, check logs for more details.", StatusCode: http.StatusBadRequest}, nil
+	}
 
 	response, err := services.WriteToDynamo(userPayload)
 
