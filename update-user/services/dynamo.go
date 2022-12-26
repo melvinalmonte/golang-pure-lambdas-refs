@@ -34,9 +34,20 @@ func UpdateItemInDynamo(user models.UserModel, userId string) error {
 		zap.S().Errorf("An error has occurred marshaling user ID, error: %v", err)
 	}
 
-	update := expression.Set(expression.Name("firstName"), expression.Value(user.FirstName))
-	update.Set(expression.Name("lastName"), expression.Value(user.LastName))
+	zap.S().Info("Marshaling attribute values (av) for user object")
+	av, err := attributevalue.MarshalMap(user)
 
+	if err != nil {
+		zap.S().Errorf("An error has occurred marshaling user object, error: %v", err)
+	}
+
+	update := expression.UpdateBuilder{}
+
+	for k, v := range av {
+		update = update.Set(expression.Name(k), expression.Value(v))
+	}
+
+	zap.S().Info("Building DynamoDB update expression")
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 
 	if err != nil {
